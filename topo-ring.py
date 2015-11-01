@@ -10,6 +10,7 @@ from mininet.cli  import CLI
 from mininet.node import OVSSwitch
 from mininet.log import setLogLevel
 from mininet.net import Mininet
+from mininet.clean import cleanup
 
 class MyRingTopo(Topo):
     def build(self, max_sw=20, **_opts):
@@ -24,11 +25,11 @@ class MyRingTopo(Topo):
 
 	for i in range(sw_head, sw_head + max_sw):
 	    Switchs.append('sw%d'  %i)
-	    self.addNode('sw%d'  %i)
+	    self.addSwitch('sw%d' %i)
 
 	for i in range(h_head, h_head + max_h):
 	    Hosts.append('h%d'  %i)
-	    self.addNode('h%d'  %i)
+	    self.addHost('h%d' %i)
 
         #"""偶数と奇数をここで分ける"""
 	Hostknum = Hosts[0::2] #偶数
@@ -45,9 +46,17 @@ class MyRingTopo(Topo):
 # topos = { 'myringtopo': ( lambda: MyRingTopo() ) }
 
 if __name__ == '__main__':
+    cleanup()
+
+    max_sw = 20
     setLogLevel( 'info' )
-    topo    = MyRingTopo( max_sw=22 )
+    topo    = MyRingTopo( max_sw )
     network = Mininet(topo, switch=OVSSwitch )
+
+    # cli = CLI(network)
+    # for i in range(1001, 1001 + max_sw*2):
+    #     cli.do_py("h%d ifconfig eth0 down" %i)
+
     network.run( CLI, network )
 
 
