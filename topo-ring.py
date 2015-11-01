@@ -6,6 +6,10 @@ Custom ring Topology
 """
 
 from mininet.topo import Topo
+from mininet.cli  import CLI
+from mininet.node import OVSSwitch
+from mininet.log import setLogLevel
+from mininet.net import Mininet
 
 class MyRingTopo(Topo):
     def build(self, max_sw=20, **_opts):
@@ -38,4 +42,12 @@ class MyRingTopo(Topo):
 	    self.addLink(Switchs[i], Switchs[i+1])
         self.addLink(Switchs[max_sw-1], Switchs[0])
 
-topos = { 'myringtopo': ( lambda: MyRingTopo() ) }
+# topos = { 'myringtopo': ( lambda: MyRingTopo() ) }
+
+if __name__ == '__main__':
+    setLogLevel( 'info' )
+    topo    = MyRingTopo( max_sw=22 )
+    network = Mininet(topo, switch=OVSSwitch )
+    network.run( CLI, network )
+
+
